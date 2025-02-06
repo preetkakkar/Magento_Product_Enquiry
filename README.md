@@ -1,4 +1,4 @@
-# Add an "Enquiry" or "Ask a Question" button on the product page in Magento 2
+# Add an Enquiry button on the product page in Magento 2
 
 Use this code to add an "Enquiry" or "Ask a Question" button on the product page in Magento 2. When clicked, a popup form will appear, allowing customers to submit their inquiries about the product.
 
@@ -22,6 +22,7 @@ Use this code to add an "Enquiry" or "Ask a Question" button on the product page
           	 name="mypopup.form"
           	 template="Magento_Catalog::product/view/popup_form.phtml"/>
 	</referenceContainer>
+3. Add ajax-productenquiryform.php file in the root of Magento
 
 ## File Functions:
 
@@ -29,7 +30,7 @@ Use this code to add an "Enquiry" or "Ask a Question" button on the product page
 
 <strong>popup_form.phtml → </strong>  Contains the popup form layout and input fields for customer inquiries. <br>
 
-<strong>ajax-productenquiryform → </strong> Add file in the root of Magento. This file handles form submission and sends emails using PHPMailer.
+<strong>ajax-productenquiryform.php → </strong> Handles form submission and sends emails using PHPMailer.
 
 ### With this implementation, customers can easily ask product-related questions, improving engagement and customer support.
 
