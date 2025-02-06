@@ -28,7 +28,7 @@ Use this code to add an "Enquiry" or "Ask a Question" button on the product page
 
 ## File Functions:
 
-**query.phtml → **  Adds the "Ask a Question" button to the product page.<br>
+__ __query.phtml → __ __  Adds the "Ask a Question" button to the product page.<br>
 
 **popup_form.phtml → **  Contains the popup form layout and input fields for customer inquiries. <br>
 
