@@ -1,0 +1,247 @@
+
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance(); //instance of\Magento\Framework\App\ObjectManager
+$storeManager = $_objectManager->get('Magento\Store\Model\StoreManagerInterface'); 
+$currentStore = $storeManager->getStore();
+$baseUrl = $currentStore->getBaseUrl();
+
+?>
+
+
+<style>
+
+/*Hidden class for adding and removing*/
+.lds-dual-ring.hidden {
+    display: none;
+}
+
+/*Add an overlay to the entire page blocking any further presses to buttons or other elements.*/
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, .8);
+    z-index: 9999;
+    opacity: 1;
+    transition: all 0.5s;
+}
+
+/*Spinner Styles*/
+.lds-dual-ring {
+    display: inline-block;
+    /* width: 80px; */
+    /* height: 80px; */
+}
+
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 30% auto;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+</style>
+<!-----------Loader for the form------------>
+<div id="loader" class="lds-dual-ring hidden overlay"></div>
+
+<div id="popup-modal" style="display:none;">
+    <form class="form contact"
+          id="prod-enquiry-form"
+          method="post"
+          data-hasrequired="<?= $block->escapeHtmlAttr(__('* Required Fields')) ?>"
+          data-mage-init='{"validation":{}}'>
+        <fieldset class="fieldset">
+            <div class="field name required">
+                <label class="label" for="user-name"><span><?= $block->escapeHtml(__('Name')) ?></span></label>
+                <div class="control">
+                    <input name="user_name" id="user-name" title="<?= $block->escapeHtmlAttr(__('Name')) ?>"
+                           class="input-text" type="text" data-validate="{required:true}"/>
+                </div>
+            </div>
+            <div class="field email required">
+                <label class="label" for="user-email"><span><?= $block->escapeHtml(__('Email')) ?></span></label>
+                <div class="control">
+                    <input name="user_email" id="user-email" title="<?= $block->escapeHtmlAttr(__('Email')) ?>"
+                           class="input-text" type="email" data-validate="{required:true}"/>
+                </div>
+            </div>
+            <div class="field phone required">
+                <label class="label" for="user-phone"><span><?= $block->escapeHtml(__('Phone')) ?></span></label>
+                <div class="control">
+                    <input name="user_phone" id="user-phone" title="<?= $block->escapeHtmlAttr(__('Phone')) ?>"
+                           class="input-text" type="text" data-validate="{required:true}"/>
+                </div>
+            </div>
+            <div class="field enquiry_type required">
+                <label class="label" for="enquiry_type"><span><?= $block->escapeHtml(__('Enquiry Type')) ?></span></label>
+                <div class="control">
+					<input name="enquiry_type" id="enquiry_type" title="<?= $block->escapeHtmlAttr(__('enquiry_type')) ?>"
+                           type="radio" data-validate="{required:true}" value = "Request Quote" style="margin-left:1px;" /> Request Quote
+					<span style="margin-left: 20px;">&nbsp;</span>
+					<input  name="enquiry_type" id="enquiry_type" title="<?= $block->escapeHtmlAttr(__('enquiry_type')) ?>"
+                           type="radio" data-validate="{required:true}" value="Request further information"> Request further information  
+                </div>
+            </div>
+            <div class="field quantity required">
+                <label class="label" for="quantity"><span><?= $block->escapeHtml(__('Quantity')) ?></span></label>
+                <div class="control">
+                    <input name="quantity" id="quantity" title="<?= $block->escapeHtmlAttr(__('Quantity')) ?>"
+                           class="input-text" type="text" data-validate="{required:true}" />
+                </div>
+            </div>
+            <div class="field company required">
+                <label class="label" for="company"><span><?= $block->escapeHtml(__('Company')) ?></span></label>
+                <div class="control">
+                    <input name="company" id="company" title="<?= $block->escapeHtmlAttr(__('Company')) ?>" class="input-text" type="text" data-validate="{required:true}" />
+                </div>
+            </div>
+			<div class="field location required">
+			<label class="label" for="location"><span><?= $block->escapeHtml(__('Nearest Location')) ?></span></label>
+				<div class="control" id="location-info">
+		                <select  name="location" id="location" title="<?= $block->escapeHtmlAttr(__(' Nearest Location')) ?>"
+                           class="input-text" type="text" data-validate="{required:true}">
+		                    <option value="None">Please select a state or region...</option>
+		                    <option value="ACT">Australian Capital Territory</option>
+		                    <option value="NSW">New South Wales</option>
+		                    <option value="NT">Northern Territory</option>
+		                    <option value="QLD">Queensland</option>
+		                    <option value="SA">South Australia</option>
+		                    <option value="TAS">Tasmania</option>
+		                    <option value="VIC">Victoria</option>
+		                    <option value="WA">Western Australia</option>
+		                    <option value="V">Vietnam</option>
+		                    <option value="S">Singapore</option>
+		                    <option value="NZ">New Zealand</option>
+		                    <option value="RW">Rest of the World</option>
+		                </select>
+				</div>
+			</div>
+			
+            <div class="field extension">
+                <input type='hidden' name="extension" id="extension-name"
+                       class="input-text" type="text"/>
+                <input type='hidden' name="prod_sku" id="prod-sku" class="input-text" type="text" value="<?= $block->getProduct()->getSku() ?>">
+                <input type='hidden' name="prod_name" id="prod-name" class="input-text" type="text" value="<?= $block->getProduct()->getName() ?>">
+            </div>
+            <div class="field msg">
+                <label class="label" for="msg"><span><?= $block->escapeHtml(__('Message')) ?></span></label>
+                <div class="control">
+                    <textarea id="msg" name="user_message"></textarea>
+                </div>
+            </div>
+			 <div class="field contact_method required">
+                <label class="label" for="contact_method"><span><?= $block->escapeHtml(__('What is your preferred contact method?')) ?></span></label>
+                <div class="control">
+					<input name="contact_method" id="contact_method" title="<?= $block->escapeHtmlAttr(__('contact_method')) ?>"
+                           type="radio" data-validate="{required:true}" value = "Phone Contact" style="margin-left:1px;" /> Phone
+					<span style="margin-left: 20px;">&nbsp;</span>
+					<input  name="contact_method" id="contact_method" title="<?= $block->escapeHtmlAttr(__('contact_method')) ?>"
+                           type="radio" data-validate="{required:true}" value="Email Contact"> Email  
+                </div>
+            </div>
+        </fieldset>
+        <div style="margin-bottom:20px;" class="actions-toolbar">
+            <div class="primary">
+                <button type="submit" id='customer-contact' title="<?= $block->escapeHtmlAttr(__('Submit')) ?>"
+                        class="action submit primary">
+                    <span><?= $block->escapeHtml(__('Submit')) ?></span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal'
+        ],
+        function (
+            $,
+            modal
+        ) {
+            var options = {
+                type: 'popup',
+                title: 'Product Enquiry Or Request Quote - <?= $block->getProduct()->getName() ?>',
+                modalClass: 'modal-enquiry',
+                buttons: false
+                // [{
+                //     text: $.mage.__('Close'),
+                //     class: '',
+                //     click: function () {
+                //         this.closeModal();
+                //     }
+                // }]
+            };
+
+            var popup = modal(options, $('#popup-modal'));
+            $(".query").on('click', function () {
+                $("#popup-modal").modal("openModal");
+            });
+
+            $(document).on('submit','form#prod-enquiry-form',function(e){
+               // code
+                e.preventDefault();
+
+                var form_data = $("#prod-enquiry-form").serialize();
+
+                $.ajax({
+                    url: "<?php echo str_replace('index.php/','',$baseUrl).'ajax-productenquiryform.php?action=prodquery' ?>",
+                    type: 'POST',
+                    data : form_data,
+					
+					 beforeSend: function() { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+						$('#loader').removeClass('hidden')
+							},
+					
+                    success: function(response){
+                        var jsonData = JSON.parse(response);
+						$('#prod-enquiry-form').trigger('reset');
+                        if(jsonData.success == 1){
+                            $('#prod-enquiry-form').before('<span style="color:green" class="msg_success">Thank you for recent enquiry. One of our customer representative will contact you shortly!</span>');
+                            setTimeout(
+                              function()
+                              {
+                                $("#popup-modal").modal("closeModal");
+                              }, 3000);
+
+                        } else {
+                            $('#prod-enquiry-form').before('<span style="color:red"  class="msg_failed">Message failed to send!</span>');
+                        }
+                        console.dir(jsonData);
+                    },
+					
+					complete: function() { // Set our complete callback, adding the .hidden class and hiding the spinner.
+                		$('#loader').addClass('hidden')
+            		},
+					
+					
+                    error: function(result){
+                        console.log('no response !');
+                    }
+                });
+            });
+        }
+    );
+</script>
